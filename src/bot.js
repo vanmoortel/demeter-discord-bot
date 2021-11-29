@@ -1,9 +1,10 @@
-import logger from "./service/winston/index.js"
 import createClient from "./service/discord/index.js"
 import {Mutex} from "async-mutex"
-import connectWallet, {loadDb} from "./service/aleph/index.js"
-import createIPFS from "./service/ipfs/index.js"
+import connectWallet, {loadDb, persistDb} from "./service/aleph/index.js"
 import createDb from "./service/lowdb/index.js"
+import createHeartBeat from "./service/heartbeats/index.js"
+import {checkWhenNewGuild, checkWhenReady, onMessageCreate} from "./service/discord/service/index.js";
+import processCommand from "./service/discord/service/command/index.js";
 
 (async () => {
     // Mutex will be used to prevent concurrent modification on aleph,
@@ -13,19 +14,23 @@ import createDb from "./service/lowdb/index.js"
     // Wallet with some ALEPH token to save your database
     const wallet = await connectWallet()
 
-    // IPFS node to save DB(I dont use ALEPH directly due to issue with file size)
-    const ipfs = await createIPFS()
-
     const db = await createDb();
 
-    await loadDb(wallet, db, mutex, ipfs)
+    // Load last saved Database
+    await loadDb(wallet, db, mutex)
 
     // Discord.js client
-    const clientDiscord = createClient(
+    const clientDiscord = await createClient(
         undefined,
         undefined,
         undefined,
-        () => logger.info('Connected'),
-        () => logger.info('blip'),
-        undefined)
+        async (client) => await checkWhenReady(client),
+        (message) => onMessageCreate(message, clientDiscord, db, mutex),
+        undefined,
+        (interaction) => processCommand(interaction, db, mutex),
+        async (guild) => await checkWhenNewGuild(guild),)
+
+
+    const heartbeat = createHeartBeat(undefined, undefined, [{modulo: 1, func: async () => await persistDb(wallet, db, mutex)}])
+
 })()

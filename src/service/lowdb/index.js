@@ -6,7 +6,7 @@ import logger from "../winston/index.js"
  * @param defaultData - Default data structure or old data from IPFS
  * @returns {Promise<null|Low>}
  */
-const createDb = async (defaultData={ users: [], config: {}, proposal: [], period: [] }) => {
+const createDb = async (defaultData={}) => {
     try {
         const db = new Low(new Memory())
 

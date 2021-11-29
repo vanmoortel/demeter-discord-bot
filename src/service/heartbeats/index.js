@@ -1,11 +1,19 @@
 import HeartBeats from 'heartbeats'
 import logger from "../winston/index.js"
 
+export const ONE_MIN = 60000
 export const FIVE_MIN = 300000
 
-const createHeartBeats = (
+/**
+ * Create a HeartBeat
+ * @param heartBeatName - HeartBeat name used to kill it
+ * @param heartRate - Heart rate
+ * @param events - List of events
+ * @returns {null}
+ */
+const createHeartBeat = (
     heartBeatName='heartbeats',
-    heartRate=FIVE_MIN,
+    heartRate=ONE_MIN,
     events=[{modulo: 1, func: () => logger.info('check')}]
 ) => {
     try {
@@ -20,3 +28,5 @@ const createHeartBeats = (
         return null
     }
 }
+
+export default createHeartBeat
