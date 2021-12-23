@@ -35,7 +35,7 @@ export const transferMessage = async (messageReaction, user, isRemove, guildUuid
 
         logger.debug('Transfer message...')
         const channel = await messageReaction?.message?.guild?.channels
-            ?.resolve(db?.data[guildUuid]?.reactionTransfers[messageReaction?.emoji?.name])
+            ?.fetch(db?.data[guildUuid]?.reactionTransfers[messageReaction?.emoji?.name])
             ?.catch(() => null)
         if (!channel) return true
 

@@ -238,12 +238,18 @@ export const setReactionTransferReputation = async (reputation, guildUuid, db, m
  */
 export const setReactionTransfer = async (reaction, channel, guildUuid, db, mutex) => basicSetter(
     guildUuid,
-    async () => reaction,
+    async () => {
+        const regex = /<:(.*):\d+>|(.)/gm
+        let emoji = reaction.replace(regex, '$1') || reaction.replace(regex, '$2')
+        return !!emoji
+    },
     async (guildDb) => {
+        const regex = /<:(.*):\d+>|(.)/gm
+        let emoji = reaction.replace(regex, '$1') || reaction.replace(regex, '$2')
         if (channel)
-            guildDb.reactionTransfers[reaction] = channel
+            guildDb.reactionTransfers[emoji] = channel
         else
-            delete guildDb.reactionTransfers[reaction]
+            delete guildDb.reactionTransfers[emoji]
         return guildDb
     }, db, mutex)
 
