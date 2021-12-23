@@ -207,7 +207,7 @@ export const setReputationRole = async (role, min, guildUuid, client, db, mutex)
             guildDb.reputationRoles[role] = min
         else
             delete guildDb.reputationRoles[role]
-        await addRemoveReputationRole(typeof min === 'number', guildDb.users, guildDb.reputationRoles, guildUuid, {client})
+        await addRemoveReputationRole(typeof min === 'number', guildDb.users, guildDb.reputationRoles, db.data[guildUuid]?.guildDiscordId, {client})
         return guildDb
     }, db, mutex)
 
