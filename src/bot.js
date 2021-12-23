@@ -38,8 +38,8 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
 
     const heartbeat = createHeartBeat(undefined, undefined, [
         {modulo: 1, func: async () => await persistDb(wallet, db, mutex)},
-        {modulo: 60, func: async () => await checkEndRound(db, mutex, {client: clientDiscord})},
-        {modulo: 15, func: async () => await checkEndProposal(db, mutex, {client: clientDiscord})},
+        {modulo: 2, func: async () => await checkEndRound(db, mutex, {client: clientDiscord})},
+        {modulo: 2, func: async () => await checkEndProposal(db, mutex, {client: clientDiscord})},
     ])
 
 })()
