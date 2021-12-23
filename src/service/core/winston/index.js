@@ -26,6 +26,12 @@ const logger = createLogger({
         ]
         :
         [
+            new transports.Console({
+                format: format.combine(
+                    format.colorize(),
+                    format.simple()
+                )
+            }),
             new transports.File({ dirname: 'log', filename: 'self-managed-discord-error.log', level: 'error'}),
             new transports.File({ dirname: 'log', filename: 'self-managed-discord-combined.log', level: 'info'})
         ]
