@@ -7,6 +7,9 @@
     "url": "https://github.com/vanmoortel/self-managed-discord",
     "type": "git"
   },
+  "engines": {
+    "node": ">=16.0.0"
+  },
   "scripts": {
     "start": "node src/bot.js",
     "bot": "node src/bot.js"
