@@ -11,14 +11,17 @@ import logger from '../../../core/winston/index.js'
  */
 export const addRemoveReputationRole = async (isAdd, users, reputationRoles, guildDiscordId, {client}) => {
     try {
+        logger.debug('Fetch guild...')
         const guild = await client?.guilds
             ?.fetch(guildDiscordId)
             ?.catch(() => null)
         if(!guild) return {}
+        logger.debug('Fetch guild done.')
 
+        logger.debug('Update role base on reputation for all users...')
         for (const user of Object.values(users)){
             const roleToAdd = Object.keys(reputationRoles)
-                ?.filter(role => reputationRoles[role] <= user?.reputation[user?.reputation?.length - 1])
+                ?.filter(role => reputationRoles[role] <= user?.reputations[user?.reputations?.length - 1])
             if (!roleToAdd?.length) continue
 
             const member = await guild?.members
@@ -40,6 +43,7 @@ export const addRemoveReputationRole = async (isAdd, users, reputationRoles, gui
                 }
             }
         }
+        logger.debug('Update role base on reputation for all users done.')
         return true
     } catch (e) {
         logger.error(e)
