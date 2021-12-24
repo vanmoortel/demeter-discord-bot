@@ -10,18 +10,21 @@ import logger from '../../../core/winston/index.js'
  * @param mutex - mutex to access database safely
  * @returns {Promise<boolean>}
  */
-export const addRemoveRole = async (messageReaction, user, guildUuid, isRemove, db, mutex) => {
+export const addRemoveRole = async (messageReaction, user, isRemove, guildUuid, db, mutex) => {
     try {
         await db.read()
 
         if (!db?.data[guildUuid]?.reactionRoles[messageReaction?.message?.id]
             || !db?.data[guildUuid]?.reactionRoles[messageReaction?.message?.id][messageReaction?.emoji?.name]) return false
 
+        logger.debug('Retrieve member...')
         const member = await messageReaction?.message?.guild?.members
             ?.fetch(user?.id)
             ?.catch(() => null)
         if (!member) return true
+        logger.debug('Retrieve member...')
 
+        logger.debug('Add/remove role...')
         if (!isRemove)
             member?.roles
                 ?.add(db?.data[guildUuid]?.reactionRoles[messageReaction?.message?.id][messageReaction?.emoji?.name])
@@ -30,6 +33,7 @@ export const addRemoveRole = async (messageReaction, user, guildUuid, isRemove, 
             member?.roles
                 ?.remove(db?.data[guildUuid]?.reactionRoles[messageReaction?.message?.id][messageReaction?.emoji?.name])
                 ?.catch(() => logger.error('Failed to remove role.'))
+        logger.debug('Add/remove role done.')
 
         return true
     } catch (e) {
