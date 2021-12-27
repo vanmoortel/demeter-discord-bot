@@ -1,5 +1,5 @@
 import {Mutex} from 'async-mutex'
-import connectWallet, {loadDb, persistDb} from './service/core/aleph/index.js'
+import {loadDb, persistDb, makeStorageClient} from './service/core/ipfs/index.js'
 import createDb from './service/core/lowdb/index.js'
 import createHeartBeat from './service/core/heartbeats/index.js'
 import {checkWhenNewGuild, checkWhenReady, onMessageCreate, createClient} from './service/discord/index.js'
@@ -14,14 +14,14 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
     // it's slow inefficient BUT good enough for this use-case
     const mutex = new Mutex()
 
-    // Wallet with some ALEPH token to save your database
-    const wallet = await connectWallet()
+    // web3.storage client
+    const clientWeb3 = await makeStorageClient()
 
     const db = await createDb()
     const salt = {} // Salt will be used for captcha secret
 
     // Load last saved Database
-    await loadDb(wallet, db, mutex, undefined)
+    await loadDb(clientWeb3, db, mutex)
 
     // Discord.js client
     const clientDiscord = await createClient(
@@ -36,10 +36,9 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
         async (guild) => await checkWhenNewGuild(guild),)
 
 
-    const heartbeat = createHeartBeat(undefined, undefined, [
-        {modulo: 1, func: async () => await persistDb(wallet, db, mutex)},
-        {modulo: 2, func: async () => await checkEndRound(db, mutex, {client: clientDiscord})},
-        {modulo: 2, func: async () => await checkEndProposal(db, mutex, {client: clientDiscord})},
-    ])
-
+        const heartbeat = createHeartBeat(undefined, undefined, [
+            {modulo: 6, func: async () => await persistDb(clientWeb3, db, mutex)},
+            {modulo: 2, func: async () => await checkEndRound(db, mutex, {client: clientDiscord})},
+            {modulo: 2, func: async () => await checkEndProposal(db, mutex, {client: clientDiscord})},
+        ])
 })()
