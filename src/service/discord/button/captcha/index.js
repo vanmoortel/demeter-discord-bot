@@ -56,8 +56,8 @@ const printCaptchaImage = async (interaction, failed, salt, noiseImg, successQty
             let emoji = await Jimp.read('./images/emoji/' + path)
             if (rng(0, 2)) emoji = await emoji.flip(true, false)
             if (rng(0, 2)) emoji = await emoji.flip(false, true)
-            if (rng(0, 2)) emoji = await emoji.resize(rng(50, 100), 72)
-            else emoji = await emoji.resize(72, rng(50, 100))
+            if (rng(0, 2)) emoji = await emoji.resize(rng(30, 120), 72)
+            else emoji = await emoji.resize(72, rng(30, 120))
             emoji = await emoji.pixelate(rng(3, 5))
             emoji = await emoji.rotate(rng(0, 90))
             let pos = [rng(0, 540), rng(0, 200)]
@@ -70,11 +70,7 @@ const printCaptchaImage = async (interaction, failed, salt, noiseImg, successQty
         logger.debug('Put 3 visible emoji done.')
 
         logger.debug('Noise...')
-        for (let i = 0; i < rng(2, 3); ++i) {
-            let noise = await noiseImg.clone()
-            noise = await noise.rotate(rng(0, 120))
-            captchaImg = await captchaImg.composite(noise, -rng(200, 400), -rng(200, 400))
-        }
+        captchaImg = await captchaImg.composite(noiseImg, -rng(200, 400), -rng(200, 400))
         logger.debug('Noise done.')
 
         logger.debug('Shuffle button...')
