@@ -46,7 +46,7 @@ export const persistDb = async (clientWeb3, db, mutex) => {
  */
 export const loadDb = async (clientWeb3, db, mutex) => {
     try {
-        mutex.runExclusive(async () => {
+        await mutex.runExclusive(async () => {
             logger.debug('Fetch last directory...')
             let lastUpload = null
             try {
