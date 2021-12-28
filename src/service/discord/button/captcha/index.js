@@ -60,6 +60,14 @@ const printCaptchaImage = async (interaction, failed, salt, noiseImg, successQty
             else emoji = await emoji.resize(72, rng(30, 120))
             emoji = await emoji.pixelate(rng(3, 5))
             emoji = await emoji.rotate(rng(0, 90))
+            emoji = await emoji.color([
+                {apply: 'mix', params: ['red', rng(0, 20)]},
+                {apply: 'hue', params: [rng(-260, 260)]},
+                {apply: 'mix', params: ['green', rng(0, 20)]},
+                {apply: 'hue', params: [rng(-260, 260)]},
+                {apply: 'mix', params: ['blue', rng(0, 20)]},
+                {apply: 'hue', params: [rng(-260, 260)]},
+            ])
             let pos = [rng(0, 540), rng(0, 200)]
             do {
                 pos = [rng(0, 540), rng(0, 200)]
