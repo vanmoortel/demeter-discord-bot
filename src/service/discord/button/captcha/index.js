@@ -71,8 +71,9 @@ const printCaptchaImage = async (interaction, failed, salt, noiseImg, successQty
 
         logger.debug('Noise...')
         for (let i = 0; i < rng(2, 3); ++i) {
-            noiseImg = await noiseImg.rotate(rng(0, 120))
-            captchaImg = await captchaImg.composite(noiseImg, -rng(200, 400), -rng(200, 400))
+            let noise = await noiseImg.clone()
+            noise = await noise.rotate(rng(0, 120))
+            captchaImg = await captchaImg.composite(noise, -rng(200, 400), -rng(200, 400))
         }
         logger.debug('Noise done.')
 
