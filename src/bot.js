@@ -1,4 +1,5 @@
 import {Mutex} from 'async-mutex'
+import Jimp from 'jimp'
 import {loadDb, persistDb, makeStorageClient} from './service/core/ipfs/index.js'
 import createDb from './service/core/lowdb/index.js'
 import createHeartBeat from './service/core/heartbeats/index.js'
@@ -19,6 +20,7 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
 
     const db = await createDb()
     const salt = {} // Salt will be used for captcha secret
+    const noiseOriginal = await Jimp.read('./images/noise.png') // Noise image for captcha
 
     // Load last saved Database
     await loadDb(clientWeb3, db, mutex)
@@ -32,7 +34,7 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
         (message) => onMessageCreate(message, clientDiscord, db, mutex),
         async (messageReaction, user) => await processReaction(messageReaction, user, false, db, mutex),
         async (messageReaction, user) => await processReaction(messageReaction, user, true, db, mutex),
-        (interaction) => processCommand(interaction, db, mutex, salt),
+        (interaction) => processCommand(interaction, db, mutex, salt, noiseOriginal),
         async (guild) => await checkWhenNewGuild(guild),)
 
 

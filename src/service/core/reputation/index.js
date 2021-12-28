@@ -201,7 +201,7 @@ export const distributeReputation = async (_guildDb, shift = 0, discord) => {
             .map(u => u?.reputations[roundLength - 1 - shift]
                 ? Math.max(roundNow?.config?.defaultReputation, u?.reputations[roundLength - 1 - shift])
                 : 0)
-            .map(r => r * (roundNow?.config?.minReputationDecay + (diffMinMax*(Math.tan(Math.pow(Math.min(1, r / (reputationSd * 4)), 5))/Math.tan(1)))))
+            .map(r => r * (roundNow?.config?.minReputationDecay + (diffMinMax*(Math.tan(Math.pow(Math.min(1, r / (reputationSd * 10)), 5))/Math.tan(1)))))
             , 0].reduce((a, n) => a + n)
         logger.debug('Compute reputation standard deviation and total burn for reputation decay done.')
 
@@ -237,10 +237,10 @@ export const distributeReputation = async (_guildDb, shift = 0, discord) => {
             // Add reputation Quadratic funding
             users[user] += usersMatched[user] || 0
 
-            // Get the diff between the user reputation and 10x the median(can't be lower than 1)
-            const pctDiffMedian10 = Math.min(1, userOldReputation / (reputationSd * 10))
-            // Apply the min reputation decay and more if the user is near the 10x median => tan(X^5)/tan(1)
-            users[user] -= userOldReputation * (roundNow?.config?.minReputationDecay + (diffMinMax*(Math.tan(Math.pow(pctDiffMedian10, 5))/Math.tan(1))))
+            // Get the diff between the user reputation and 10x the Standard deviation(can't be lower than 1)
+            const pctDiffSD10 = Math.min(1, userOldReputation / (reputationSd * 10))
+            // Apply the min reputation decay and more if the user is near the 10x SD => tan(X^5)/tan(1)
+            users[user] -= userOldReputation * (roundNow?.config?.minReputationDecay + (diffMinMax*(Math.tan(Math.pow(pctDiffSD10, 5))/Math.tan(1))))
 
             // Cant be below defaultReputation
             users[user] = Math.max(roundNow?.config?.defaultReputation, users[user])

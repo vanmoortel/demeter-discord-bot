@@ -333,7 +333,7 @@ export const COMMANDS = [
                         name: COMMANDS_NAME.ROUND.CONFIG.ROUND_SHIFT.name,
                         description: 'How much round in the past(0=now)',
                     }, {
-                        type: ApplicationCommandOptionTypes.ROLE,
+                        type: ApplicationCommandOptionTypes.BOOLEAN,
                         name: COMMANDS_NAME.ROUND.CONFIG.APPLY_GUILD_DEFAULT.name,
                         description: 'Apply guild default setting to this round',
                     }, {
@@ -402,7 +402,7 @@ export const COMMANDS = [
                 description: 'Config user',
                 options: [
                     {
-                        type: ApplicationCommandOptionTypes.ROLE,
+                        type: ApplicationCommandOptionTypes.BOOLEAN,
                         name: COMMANDS_NAME.USER.CONFIG.APPLY_GUILD_DEFAULT.name,
                         description: 'Apply guild default setting',
                     }, {
@@ -600,9 +600,10 @@ export const COMMANDS = [
  * @param db - in-memory database
  * @param mutex - Mutex to access database safely
  * @param salt - Salt to generate a hash to hide the correct button
+ * @param noiseImg - Jimp preloaded noise image
  * @returns {Promise<boolean>}
  */
-const processCommand = async (interaction, db, mutex, salt) => {
+const processCommand = async (interaction, db, mutex, salt, noiseImg) => {
     try {
         if (interaction.type ===  2)return true
 
@@ -621,7 +622,7 @@ const processCommand = async (interaction, db, mutex, salt) => {
         if(await processPrintButton(interaction, guildUuid, db, mutex))return true
         if(await processProposal(interaction, guildUuid, db, mutex))return true
 
-        if(await processButton(interaction, guildUuid, db, mutex, salt))return true
+        if(await processButton(interaction, guildUuid, db, mutex, salt, noiseImg))return true
 
     } catch (e) {
         logger.error(e)

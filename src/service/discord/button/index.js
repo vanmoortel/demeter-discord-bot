@@ -9,13 +9,14 @@ import {processSelect} from '../select/index.js'
  * @param db - in-memory database
  * @param mutex - Mutex to access database safely
  * @param salt - Salt to generate a hash to hide the correct button
+ * @param noiseImg - Jimp preloaded noise image
  * @returns {Promise<boolean>}
  */
-export const processButton = async (interaction, guildUuid, db, mutex, salt) => {
+export const processButton = async (interaction, guildUuid, db, mutex, salt, noiseImg) => {
     try {
         if (!interaction.customId) return false
 
-        if (await printCaptcha(interaction, guildUuid, db, salt)) return true
+        if (await printCaptcha(interaction, guildUuid, db, salt, noiseImg)) return true
         if (await processSelect(interaction, guildUuid, db)) return true
 
         return false

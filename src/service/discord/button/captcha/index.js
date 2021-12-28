@@ -23,12 +23,13 @@ export const captchaComponents = [new MessageActionRow()
  * Generate a captcha image with 3 emoji and a LOT of noise, user need to clic on the matching emoji button(3 time)
  * @param interaction - Discord interaction
  * @param failed - true if user failed to solve a previous captcha, will reset salt
+ * @param noiseImg - Jimp preloaded noise image
  * @param salt - Salt to generate a hash to hide the correct button
  * @param successQty - How much success captcha solved
  * @param skipCheck - Skip check of interaction.customId, used when not the first captcha to solve
  * @returns {Promise<boolean>}
  */
-const printCaptchaImage = async (interaction, failed, salt, successQty, skipCheck) => {
+const printCaptchaImage = async (interaction, failed, salt, noiseImg, successQty, skipCheck) => {
     try {
         if (!skipCheck && !failed && interaction.customId !== BUTTON_CAPTCHA.VERIFY.customId) return false
 
@@ -69,11 +70,9 @@ const printCaptchaImage = async (interaction, failed, salt, successQty, skipChec
         logger.debug('Put 3 visible emoji done.')
 
         logger.debug('Noise...')
-        const noiseOriginal = await Jimp.read('./images/noise.png')
         for (let i = 0; i < rng(2, 3); ++i) {
-            let noise = await noiseOriginal.clone()
-            noise = await noise.rotate(rng(0, 120))
-            captchaImg = await captchaImg.composite(noise, -rng(200, 400), -rng(200, 400))
+            noiseImg = await noiseImg.rotate(rng(0, 120))
+            captchaImg = await captchaImg.composite(noiseImg, -rng(200, 400), -rng(200, 400))
         }
         logger.debug('Noise done.')
 
@@ -128,10 +127,11 @@ const printCaptchaImage = async (interaction, failed, salt, successQty, skipChec
  * Check if the emoji selected by the user is the good one, and ask new one or apply captcha role if 3 done
  * @param interaction - Discord interaction
  * @param salt - Salt to generate a hash to hide the correct button
+ * @param noiseImg - Jimp preloaded noise image
  * @param guildDb - In-memory database
  * @returns {Promise<boolean>}
  */
-const testCaptcha = async (interaction, salt, guildDb) => {
+const testCaptcha = async (interaction, salt, noiseImg, guildDb) => {
     try {
         if (!interaction.customId.startsWith('captcha-')) return false
 
@@ -140,13 +140,13 @@ const testCaptcha = async (interaction, salt, guildDb) => {
                 .createHash('sha256')
                 .update(salt[interaction.member.id] + 'true0')
                 .digest('hex')}`:
-                await printCaptchaImage(interaction, false, salt, 1, true)
+                await printCaptchaImage(interaction, false, salt, noiseImg, 1, true)
                 break
             case `captcha-${crypto
                 .createHash('sha256')
                 .update(salt[interaction.member.id] + 'true1')
                 .digest('hex')}`:
-                await printCaptchaImage(interaction, false, salt, 2, true)
+                await printCaptchaImage(interaction, false, salt, noiseImg, 2, true)
                 break
             case `captcha-${crypto
                 .createHash('sha256')
@@ -166,7 +166,7 @@ const testCaptcha = async (interaction, salt, guildDb) => {
 
                 break
             default:
-                await printCaptchaImage(interaction, true, salt, 0, false)
+                await printCaptchaImage(interaction, true, salt, noiseImg, 0, false)
                 break
         }
 
@@ -186,14 +186,15 @@ const testCaptcha = async (interaction, salt, guildDb) => {
  * @param guildUuid - Guild unique identifier
  * @param db - In-memory database
  * @param salt - Salt to generate a hash to hide the correct button
+ * @param noiseImg - Jimp preloaded noise image
  * @returns {Promise<boolean>}
  */
-export const printCaptcha = async (interaction, guildUuid, db, salt) => {
+export const printCaptcha = async (interaction, guildUuid, db, salt, noiseImg) => {
     try {
         const guildDb = db.data[guildUuid]
 
-        if (await printCaptchaImage(interaction, false, salt, 0, false)) return true
-        if (await testCaptcha(interaction, salt, guildDb)) return true
+        if (await printCaptchaImage(interaction, false, salt, noiseImg, 0, false)) return true
+        if (await testCaptcha(interaction, salt, noiseImg, guildDb)) return true
 
         return false
     } catch (e) {
