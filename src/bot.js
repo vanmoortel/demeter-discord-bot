@@ -34,7 +34,7 @@ import {checkEndProposal} from './service/discord/proposal/index.js'
         (message) => onMessageCreate(message, clientDiscord, db, mutex),
         async (messageReaction, user) => await processReaction(messageReaction, user, false, db, mutex),
         async (messageReaction, user) => await processReaction(messageReaction, user, true, db, mutex),
-        (interaction) => processCommand(interaction, db, mutex, salt, noiseOriginal),
+        (interaction) => processCommand(interaction, db, mutex, salt, noiseOriginal, clientWeb3),
         async (guild) => await checkWhenNewGuild(guild),)
 
 

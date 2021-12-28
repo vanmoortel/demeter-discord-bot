@@ -1,7 +1,7 @@
 import {Collection} from 'discord.js'
 import logger from '../../core/winston/index.js'
 import {processButton} from '../button/index.js'
-import {configGuild} from './guild/configGuild/index.js'
+import {processGuild} from './guild/index.js'
 import {processGrant} from './reputation/grant/index.js'
 import {processReputation} from './reputation/index.js'
 import {ApplicationCommandOptionTypes} from '../util/discordConstant.js'
@@ -60,7 +60,8 @@ export const COMMANDS_NAME = {
             CHANNEL_PROPOSAL: {name: 'channel-proposal'},
 
             MIN_REPUTATION_MUTE: {name: 'min-rep-mute'},
-        }
+        },
+        DB_URL: { name: 'db-url'}
     },
     ROUND: {
         name: 'round',
@@ -318,6 +319,11 @@ export const COMMANDS = [
                         description: 'How much reputation to mute someone(0 = no mute)',
                     },
                 ]
+            },
+            {
+                type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                name: COMMANDS_NAME.GUILD.DB_URL.name,
+                description: 'Show the URL of database',
             }
         ]
     },
@@ -601,9 +607,10 @@ export const COMMANDS = [
  * @param mutex - Mutex to access database safely
  * @param salt - Salt to generate a hash to hide the correct button
  * @param noiseImg - Jimp preloaded noise image
+ * @param clientWeb3 - Web3.storage client
  * @returns {Promise<boolean>}
  */
-const processCommand = async (interaction, db, mutex, salt, noiseImg) => {
+const processCommand = async (interaction, db, mutex, salt, noiseImg, clientWeb3) => {
     try {
         if (interaction.type ===  2)return true
 
@@ -614,7 +621,7 @@ const processCommand = async (interaction, db, mutex, salt, noiseImg) => {
             ?.find(uuid => db?.data[uuid]?.guildDiscordId === interaction?.guildId)
         logger.debug('Get guild uuid done.')
 
-        if(await configGuild(interaction, guildUuid, db, mutex))return true
+        if(await processGuild(interaction, guildUuid, db, mutex, clientWeb3))return true
         if(await processRound(interaction, guildUuid, db, mutex))return true
         if(await processUser(interaction, guildUuid, db, mutex))return true
         if(await processGrant(interaction, guildUuid, db, mutex))return true
