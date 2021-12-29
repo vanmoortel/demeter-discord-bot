@@ -9,6 +9,7 @@ import {processPrintButton} from './button/index.js'
 import {processRound} from './round/index.js'
 import {processProposal} from './proposal/index.js'
 import {processUser} from './user/index.js'
+import {processGiveaway} from "./giveaway/index.js";
 
 export const COMMANDS_NAME = {
     GUILD: {
@@ -186,6 +187,12 @@ export const COMMANDS_NAME = {
             USER: { name: 'user'},
             DURATION: { name: 'duration'},
         }
+    },
+    GIVEAWAY:{
+        name: 'giveaway',
+
+        MESSAGE: { name: 'message'},
+        WEIGHTED: { name: 'weighted'},
     }
 }
 
@@ -597,6 +604,22 @@ export const COMMANDS = [
                 ]
             },
         ]
+    },
+    {
+        name: COMMANDS_NAME.GIVEAWAY.name, description: 'Discord Giveaway', options: [
+            {
+                type: ApplicationCommandOptionTypes.STRING,
+                name: COMMANDS_NAME.GIVEAWAY.MESSAGE.name,
+                description: 'Message URL where people react',
+                required: true
+            },
+            {
+                type: ApplicationCommandOptionTypes.BOOLEAN,
+                name: COMMANDS_NAME.GIVEAWAY.WEIGHTED.name,
+                description: 'Weighted by reputation',
+                required: true
+            },
+        ]
     }
 ]
 
@@ -628,6 +651,7 @@ const processCommand = async (interaction, db, mutex, salt, noiseImg, clientWeb3
         if(await processReputation(interaction, guildUuid, db, mutex))return true
         if(await processPrintButton(interaction, guildUuid, db, mutex))return true
         if(await processProposal(interaction, guildUuid, db, mutex))return true
+        if(await processGiveaway(interaction, guildUuid, db, mutex))return true
 
         if(await processButton(interaction, guildUuid, db, mutex, salt, noiseImg))return true
 

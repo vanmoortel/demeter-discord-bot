@@ -106,11 +106,15 @@ export const recomputeReputation = async (interaction, guildUuid, db, mutex) => 
             await db.write()
         })
 
-        await interaction.channel.send('Done !')
+        await interaction?.channel
+            ?.send('Done !')
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     } catch (e) {
         logger.error(e)
-        await interaction.channel.send('Something went wrong...')
+        await interaction?.channel
+            ?.send('Something went wrong...')
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     }
 }
@@ -149,7 +153,9 @@ export const fetchHistory = async (interaction, guildUuid, db, mutex) => {
             db.data[guildUuid]?.config?.channelPantheons
         )
         if (!reactions.length && !replies.length) {
-            await interaction.channel.send('Nothing found !')
+            await interaction?.channel
+                ?.send('Nothing found !')
+                ?.catch(() => logger.error('Send message failed.'))
             return true
         }
         logger.debug('Load reactions and replies done.')
@@ -253,11 +259,15 @@ export const fetchHistory = async (interaction, guildUuid, db, mutex) => {
             await db.write()
         })
 
-        await interaction.channel.send('Done !')
+        await interaction?.channel
+            ?.send('Done !')
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     } catch (e) {
         logger.error(e)
-        await interaction.channel.send('Something went wrong...')
+        await interaction?.channel
+            ?.send('Something went wrong...')
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     }
 }

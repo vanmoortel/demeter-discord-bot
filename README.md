@@ -13,6 +13,7 @@ This text is partially generated via an online translator, as I never had any En
  - Move off-topic messages to another channel directly managed by trusted members of your community
  - Poll your community via reputation-weighted proposals
  - Reward directly or via proposal your most active members
+ - Giveaway weighted by reputation or not
  - Mute a member via vote
  - Everything is saved on IPFS
  - Everything is customizable via a command on the Discord
@@ -138,6 +139,11 @@ People reacting with an emoji to this message will help the people mentioned ear
 
 You can offer to your community to censor a user, just choose the amount of reputation needed via the command `/guild config-2 min-rep-mute:100`(0=disabled)  
 Then anyone can start a vote to mute for x minutes via the following command `/proposal mute user:@Charles duration:5`
+
+## Giveaway
+
+You can run a reputation-weighted giveaway with the following command `/giveaway message:https://discord.com/channels/745336259194650788/834432995972349973/925382608970465341 weighted:True`  
+A member who reacted to this message will be selected.
 
 ## Commands
 

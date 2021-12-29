@@ -263,7 +263,9 @@ export const grantAdd = async (interaction, guildUuid, db, mutex) => {
         await interaction
             ?.reply({content: 'Update saved !', ephemeral: true})
             ?.catch(() => logger.error('Reply interaction failed.'))
-        await interaction.channel.send(`<@!${interaction.member.id}> just offered some of his reputation to <@!${receiverDiscordId}>!`)
+        await interaction?.channel
+            ?.send(`<@!${interaction.member.id}> just offered some of his reputation to <@!${receiverDiscordId}>!`)
+            ?.catch(() => logger.error('Send message failed.'))
 
         return true
     } catch (e) {

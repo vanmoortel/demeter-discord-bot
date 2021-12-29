@@ -18,7 +18,9 @@ export const printButtonCaptcha = async (interaction) => {
         await interaction
             ?.reply({content: 'Done !', ephemeral: true})
             ?.catch(() => logger.error('Reply interaction failed.'))
-        await interaction.channel.send({content: 'I\'m not a robot\n\n', components: captchaComponents})
+        await interaction?.channel
+            ?.send({content: 'I\'m not a robot\n\n', components: captchaComponents})
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     } catch (e) {
         logger.error(e)
@@ -43,7 +45,9 @@ export const printButtonGuildInfo = async (interaction) => {
         await interaction
             ?.reply({content: 'Done !', ephemeral: true})
             ?.catch(() => logger.error('Reply interaction failed.'))
-        await interaction.channel.send({content: 'You can select on one of the following options to view the guild configuration \n\n', components: guildInfoComponents})
+        await interaction?.channel
+            ?.send({content: 'You can select on one of the following options to view the guild configuration \n\n', components: guildInfoComponents})
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     } catch (e) {
         logger.error(e)
@@ -68,7 +72,9 @@ export const printButtonUserInfo = async (interaction) => {
         await interaction
             ?.reply({content: 'Done !', ephemeral: true})
             ?.catch(() => logger.error('Reply interaction failed.'))
-        await interaction.channel.send({content: 'You can select on one of the following options to view your information \n\n', components: userInfoComponents})
+        await interaction?.channel
+            ?.send({content: 'You can select on one of the following options to view your information \n\n', components: userInfoComponents})
+            ?.catch(() => logger.error('Send message failed.'))
         return true
     } catch (e) {
         logger.error(e)
