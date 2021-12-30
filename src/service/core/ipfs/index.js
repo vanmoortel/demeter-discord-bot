@@ -1,7 +1,6 @@
 import logger from '../winston/index.js'
 import { Web3Storage, File } from 'web3.storage'
 import moment from "moment";
-import {error} from "winston";
 
 export const makeStorageClient = (token=process.env.WEB3_TOKEN) => new Web3Storage({ token })
 
