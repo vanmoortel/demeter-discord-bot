@@ -168,9 +168,10 @@ export const fetchHistory = async (interaction, guildUuid, db, mutex) => {
             logger.debug('Erase all rounds done.')
 
             logger.debug('Erase reputations and config for all users...')
-            for (const user in db.data[guildUuid].users)
+            for (const user in db.data[guildUuid].users){
                 db.data[guildUuid].users[user].reputations = [db.data[guildUuid].config.defaultReputation]
                 db.data[guildUuid].users[user].config = makeUserConfigFromGuildConfig(db.data[guildUuid].config)
+            }
             logger.debug('Erase reputations and config for all users done.')
 
             while (startDate.isBefore(Moment())) {
