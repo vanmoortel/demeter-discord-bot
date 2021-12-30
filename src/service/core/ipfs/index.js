@@ -1,6 +1,7 @@
 import logger from '../winston/index.js'
 import { Web3Storage, File } from 'web3.storage'
 import moment from "moment";
+import {error} from "winston";
 
 export const makeStorageClient = (token=process.env.WEB3_TOKEN) => new Web3Storage({ token })
 
@@ -61,25 +62,25 @@ export const loadDb = async (clientWeb3, db, mutex) => {
             logger.debug('Fetch last directory done.')
 
             logger.debug('Fetch all guild files...')
-            let res = {ok: false}
-            while (!res?.ok){
-                res = await clientWeb3?.get(lastUpload?.cid)?.catch(() => ({ok: false}))
-                if(!res.ok) {
-                    await new Promise((resolve) => setTimeout(resolve, 5000))
-                }
-            }
+            let res = await clientWeb3?.get(lastUpload?.cid)?.catch(() => ({ok: false}))
+            if (!res || !res?.ok) throw error('Failed to fetch guild files.')
             logger.debug('Fetch all guild files done.')
 
+            logger.debug('Process all guild files...')
             const files = await res?.files()
+            if (!files) throw error('Failed to load files.')
             for (const file of files) {
                 db.data[file.name.replace('.json', '')] = JSON.parse(await file.text())
             }
             db.write()
+            logger.debug('Process all guild files done.')
         })
 
         return db
     } catch (e) {
         logger.error(e)
+        await new Promise((resolve) => setTimeout(resolve, 5000))
+        await loadDb(clientWeb3, db, mutex)
         return null
     }
 }
