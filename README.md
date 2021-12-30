@@ -44,7 +44,7 @@ Before launching the first round, you can set the default configurations, the ne
 All the configurations are explained below. Once you've done that, you have two choices.
 
 You can load the history of the Discord since a given date.  
-`/reputation fetch-history start-date:31/01/2021` will delete all the rounds and re-generate them since that date. The users already created will keep their configuration.  
+`/reputation fetch-history start-date:31/01/2021` will delete all the rounds, user reputations and config then re-generate them since that date.  
 This can take several hours if there are many messages to fetch.
 
 You can use `/round start-first` if you want to start the first round now.

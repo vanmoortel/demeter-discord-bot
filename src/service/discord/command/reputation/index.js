@@ -4,7 +4,7 @@ import {COMMANDS_NAME} from '../index.js'
 import {checkGrant, distributeReputation} from '../../../core/reputation/index.js'
 import {checkCreateUserDiscord} from '../../user/index.js'
 import {loadReactionReply} from '../../util/helperDiscord.js'
-import {makeRound, makeRoundConfigFromGuildConfig} from '../../../core/index.js'
+import {makeRound, makeRoundConfigFromGuildConfig, makeUserConfigFromGuildConfig} from '../../../core/index.js'
 import {makeCore} from '../../../core/data/index.js'
 import logger from '../../../core/winston/index.js'
 
@@ -167,10 +167,11 @@ export const fetchHistory = async (interaction, guildUuid, db, mutex) => {
             db.data[guildUuid].rounds = []
             logger.debug('Erase all rounds done.')
 
-            logger.debug('Erase reputations for all users...')
+            logger.debug('Erase reputations and config for all users...')
             for (const user in db.data[guildUuid].users)
                 db.data[guildUuid].users[user].reputations = [db.data[guildUuid].config.defaultReputation]
-            logger.debug('Erase reputations for all users done.')
+                db.data[guildUuid].users[user].config = makeUserConfigFromGuildConfig(db.data[guildUuid].config)
+            logger.debug('Erase reputations and config for all users done.')
 
             while (startDate.isBefore(Moment())) {
                 logger.debug('Push new empty round...')
