@@ -18,7 +18,7 @@ export const transferMessage = async (messageReaction, user, isRemove, guildUuid
             || !db?.data[guildUuid]?.config?.minReputationTransfer)return true
 
         logger.debug('Fetch all reactions...')
-        const reactions = await fetchReaction(messageReaction?.message, false)
+        const reactions = await fetchReaction(messageReaction?.message, {})
         if (!reactions?.length)return true
 
         const discordIdList = reactions
