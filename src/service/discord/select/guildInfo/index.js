@@ -36,6 +36,8 @@ export const SELECT_GUILD_INFO_OPTIONS = {
     REACTION_TRANSFERS: {value: 'reaction-transfers', label: '🔀 transfer message with reaction'},
 
     MUTED_USERS: {value: 'muted-users', label: '📵 list users muted'},
+
+    BLACKLIST: {value: 'blacklist', label: '🪦 blacklist'},
 }
 
 export const guildInfoComponents = [new MessageActionRow()
@@ -544,8 +546,35 @@ const printMutedList = async (interaction, guildDb) => {
 }
 
 /**
+ *
+ * @param interaction - Discord interaction
+ * @param guildDb - in-memory database
+ * @returns {Promise<boolean>}
+ */
+const printBlacklist = async (interaction, guildDb) => {
+    try {
+        if (!interaction?.values?.includes(SELECT_GUILD_INFO_OPTIONS.BLACKLIST.value)) return false
+
+        await interaction
+            ?.reply({content: `List of users in blacklist.\n\n${Object.keys(guildDb?.blacklist||{})
+                    ?.filter(userDiscordId => guildDb?.blacklist[userDiscordId])
+                    .map((userDiscordId) => `<@!${userDiscordId}>`)
+                    .join('\n')}`, ephemeral: true})
+            ?.catch(() => logger.error('Reply interaction failed.'))
+        return true
+    } catch (e) {
+        logger.error(e)
+        await interaction
+            ?.reply({content: 'Something went wrong...', ephemeral: true})
+            ?.catch(() => logger.error('Reply interaction failed.'))
+        return true
+    }
+}
+
+/**
  * Process all print interaction
  * @param interaction - Discord interaction
+ * @param guildUuid - Guild unique identifier
  * @param db - in-memory database
  * @returns {Promise<boolean>}
  */
@@ -585,6 +614,8 @@ export const printGuildInfo = async (interaction, guildUuid, db) => {
         if (await printReactionTransfers(interaction, guildDb)) return true
 
         if (await printMutedList(interaction, guildDb)) return true
+
+        if (await printBlacklist(interaction, guildDb)) return true
 
         return false
     } catch (e) {

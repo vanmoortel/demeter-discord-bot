@@ -61,6 +61,9 @@ export const COMMANDS_NAME = {
             CHANNEL_PROPOSAL: {name: 'channel-proposal'},
 
             MIN_REPUTATION_MUTE: {name: 'min-rep-mute'},
+
+            BLACKLIST_USER: {name: 'blacklist-user'},
+            BLACKLIST_USER_ENABLE: {name: 'blacklist-user-enable'},
         },
         DB_URL: { name: 'db-url'}
     },
@@ -324,6 +327,14 @@ export const COMMANDS = [
                         type: ApplicationCommandOptionTypes.NUMBER,
                         name: COMMANDS_NAME.GUILD.CONFIG_2.MIN_REPUTATION_MUTE.name,
                         description: 'How much reputation to mute someone(0 = no mute)',
+                    },{
+                        type: ApplicationCommandOptionTypes.USER,
+                        name: COMMANDS_NAME.GUILD.CONFIG_2.BLACKLIST_USER.name,
+                        description: 'A user who will never be included in the system.',
+                    },{
+                        type: ApplicationCommandOptionTypes.BOOLEAN,
+                        name: COMMANDS_NAME.GUILD.CONFIG_2.BLACKLIST_USER_ENABLE.name,
+                        description: 'Add/remove this user from blacklist',
                     },
                 ]
             },

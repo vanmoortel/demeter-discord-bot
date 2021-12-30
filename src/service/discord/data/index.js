@@ -139,6 +139,7 @@ export const makeDiscord = {
      * @param reactionTransfers - If user react transfer message to this channel {reaction: channel}
      * @param discordProposals - Discord proposals {sourceMessageId: DiscordProposal}
      * @param discordMutedUsers - User muted {userDiscordId: DiscordMute}
+     * @param blacklist - Blacklist of user discord id.
      * @returns {{discordMutedUsers: {}, reactionTransfers: {}, discordProposals: {}, reputationRoles: {}, guildDiscordId, reactionRoles: {}}}
      */
     makeGuild: (
@@ -148,12 +149,14 @@ export const makeDiscord = {
         reactionTransfers={},
         discordProposals= {},
         discordMutedUsers= {},
+        blacklist = {},
         ) => ({
         guildDiscordId,
         reactionRoles,
         reputationRoles,
         reactionTransfers,
         discordProposals,
-        discordMutedUsers
+        discordMutedUsers,
+        blacklist,
     })
 }

@@ -43,6 +43,10 @@ export const findUserUuidByDiscordId = (discordId, users) => Object.keys(users)
  */
 export const checkCreateUserDiscord = async (discordId, guildDb, guild) => {
     try {
+        logger.debug('Check if not blacklisted...')
+        if (guildDb?.blacklist && guildDb?.blacklist[discordId]) return null
+        logger.debug('Check if not blacklisted done.')
+
         logger.debug('Check if user already exist...')
         let uuid = findUserUuidByDiscordId(discordId, guildDb?.users)
         const roundLength = guildDb?.rounds?.length

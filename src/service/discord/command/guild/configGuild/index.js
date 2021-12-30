@@ -318,6 +318,24 @@ export const setMinReputationMute = async (reputation, guildUuid, db, mutex) => 
     }, db, mutex)
 
 /**
+ * Update the user blacklist
+ * @param userDiscordId - user Discord id
+ * @param enable - Add/remove from blacklist
+ * @param guildUuid - Guild unique identifier
+ * @param db - In-memory database
+ * @param mutex - Mutex to access the database safely
+ * @returns {Promise<boolean>}
+ */
+export const setBlacklist = async (userDiscordId, enable, guildUuid, db, mutex) => basicSetter(
+    guildUuid,
+    async () => !!userDiscordId,
+    async (guildDb) => {
+        guildDb.blacklist ||= {}
+        guildDb.blacklist[userDiscordId] = enable
+        return guildDb
+    }, db, mutex)
+
+/**
  * Initialize the guild
  * @param guildDiscordId - Guild discord id
  * @param db - in-memory database
@@ -485,6 +503,12 @@ export const configGuild = async (interaction, guildUuid, db, mutex) => {
         if (channelProposal)
             if(!await setChannelProposal(channelProposal, guildUuid, db, mutex))
                 response += 'Where to post the proposal'
+
+        const blacklistUser = options2?.find(o => o?.name === COMMANDS_NAME.GUILD.CONFIG_2.BLACKLIST_USER.name)?.value
+        const blacklistEnable = options2?.find(o => o?.name === COMMANDS_NAME.GUILD.CONFIG_2.BLACKLIST_USER_ENABLE.name)?.value
+        if (blacklistUser)
+            if(!await setBlacklist(blacklistUser, blacklistEnable, guildUuid, db, mutex))
+                response += 'Please provide a user to add/remove from blacklist'
 
         await interaction
             ?.reply({content: response || 'Done !', ephemeral: true})

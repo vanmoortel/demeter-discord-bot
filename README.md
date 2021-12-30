@@ -221,6 +221,9 @@ To mute someone, you need to gather 100 reputations.(0=disabled)
 `/guild db-url`  
 Print the database URL for this guild
 
+`/guild config-2 blacklist-user:@Jean blacklist-enable:True`  
+Add or remove someone from the blacklist, user in blacklist will never be added to the system(eg: useful for bot).
+
 ### Round
 
 `/round config round-shift:1 apply-guild-default:True`  
