@@ -63,10 +63,7 @@ export const loadDb = async (clientWeb3, db, mutex) => {
             logger.debug('Fetch all guild files...')
             let res = {ok: false}
             while (!res?.ok){
-                res = await clientWeb3?.get(lastUpload?.cid)?.catch((r) => {
-                    logger.error(JSON.stringify(res))
-                    return {ok: false}
-                })
+                res = await clientWeb3?.get(lastUpload?.cid)?.catch(() => ({ok: false}))
                 if(!res.ok) {
                     await new Promise((resolve) => setTimeout(resolve, 5000))
                 }
